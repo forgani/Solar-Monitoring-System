@@ -4,7 +4,6 @@ ESP-12 based Solar Panel Monitoring System
 This system helps you to remotely monitor the power of  your solar panels, batteries and the DC load with a smartphone from anywhere.
 It’s based on the Nodemcu ESP-12 WiFi module and Blynk application. The battery and solar voltage with the temperature will be displayed. It’s also possible by using buttons on installed app to decide witch batteries should be charged.
 
-This tutorial try to shows step-by-step how to make it.
 
 The solar panels output up to 35V with direct sun.
 The solar panels charger is positive ground controller. (And this provide me a lot problems with negative grounded ESP.)
@@ -74,4 +73,7 @@ Visualizing the data on a Blynk Android App
 The system is accessible through a Blynk app.
 The switching the batteries will sent from app by using virtual pins and the data can be easily access on app.
 
-![image](https://user-images.githubusercontent.com/25223934/142388135-af128c20-dd6f-4c97-84f8-925f4f0b792e.png)
+![image](https://user-images.githubusercontent.com/25223934/142388135-af128c20-dd6f-4c97-84f8-925f4f0b792e.png)         ![image](https://user-images.githubusercontent.com/25223934/142388652-3759402f-e5e2-4be5-9f18-613273506198.png)
+
+
+For more infos: https://www.forgani.com/electronics-projects/solar-monitoring-system/
