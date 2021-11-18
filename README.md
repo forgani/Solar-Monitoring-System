@@ -33,20 +33,17 @@ The ACS712 has to be fed with 5V and the analog outputs voltage is proportional 
 The sensor is bi-directional so it will give 2.5V output even if not current is flowing through it.  (below my calculation to get current values).
 The module gives a sensitivity of 0.1V/A in 20A and available in 5A, 20A and 30A.
 
-The ADS1115 is a 16-bit analog-to-digital converter and  I’m using to read the voltage from Hall sensor. 
-The ADS1115 can be addressed with one of four I2C addresses. (0x48, 0x49, 0x4a, 0x4b).
+The ADS1115 is a 16-bit analog-to-digital converter. It can be addressed with one of four I2C addresses. (0x48, 0x49, 0x4a, 0x4b).
 
 Voltage Supply (Vdd): 2 ~ 5V
 Measurement range: -300mV to Vdd+300mV
 Data rate: 8 ~ 860 SPS
 Active current: ~150uA (200uA max)
 
-I’m using ADS1115  in two channel and in GAIN_ONE mode.
-In GAIN_ONE mode the voltage can be measured up to maximum 4V  and provides a resolution of 0.125mV per bit.  (4.096 volts / 32767 bits )
+I’m using ADS1115 in two channel and in GAIN_ONE mode.
+In GAIN_ONE mode the voltage can be measured up to maximum 4V and provides a resolution of 0.125mV per bit.  (4.096 volts / 32767 bits )
 
 I calculated the ADC in gain_one program mode together with ACS as followed:
-
-calculation the ADC in gain_one program mode
 
 
 ![image](https://user-images.githubusercontent.com/25223934/142387939-b8997d1a-4e8e-456d-99d6-f8d10b7dc193.png)
@@ -67,7 +64,6 @@ adc = ads.readADC_SingleEnded(2);
 current = (adc - 13200 ) * aMultiplier ) / (2.5/20)); // in Ampere
 
 ![image](https://user-images.githubusercontent.com/25223934/142388200-35c7ebca-dd0c-4da4-ada8-330876fd0463.png)
-
 
 Visualizing the data on a Blynk Android App
 The system is accessible through a Blynk app.
