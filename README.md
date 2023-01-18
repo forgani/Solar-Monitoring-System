@@ -4,29 +4,11 @@ ESP-12 based Solar Panel Monitoring System
 This system helps you to remotely monitor the power of  your solar panels, batteries and the DC load with a smartphone from anywhere.
 It’s based on the Nodemcu ESP-12 WiFi module and Blynk application. The battery and solar voltage with the temperature will be displayed. It’s also possible by using buttons on installed app to decide witch batteries should be charged.
 
-
 The solar panels output up to 35V with direct sun.
 The solar panels charger is positive ground controller. (And this provide me a lot problems with negative grounded ESP.)
 Two car batteries.
-Hardware Requirements
 
-  ESP-12 WiFi module
-  2 x VOLTAGE SENSOR (INA219) for Batteries (from 0 to 26 V)
-  VOLTAGE SENSOR (INA229) for Solar (not more needed, replaced with voltage divider)
-  2 x ACS712 Current sensing Module in 30A (Available in 5A, 20A and 30A)
-  4 x resistors used as voltage divider
-  2 x 4 Channels ADS1115 16 Bit ADC Board (I2C, address 0x48)
-  Temperature  Sensor Devices:
-  LM35 Integrated Circuit (range of 0-100°C)  (Not used in version 1)
-  DHT11 Temperature/Humidity sensor (Used to measure the inside temperature around batteries.)
-  BMP280 Barometric Pressure + Temperature Sensor  (Not used in version 1)
-  1 x DS18b20 Temperature sensors (Used to measure the outside temperature.)
-  Power supply 3.3V for ESP module and 5V for the others such as 2xACS712 modules
-  Two Channel Relays 
-  The voltage of batteries can be messure by INA229 module. (but I replaced the sensors with voltage divider)
-  
-
-To measure the currents I’m using two ACS712 modules (hall effect device) .
+To measure the currents I’m using two ACS712 modules (hall effect device).
 One sensor measures the current of battery charger and the other one the current of the load.
 The ACS712 has to be fed with 5V and the analog outputs voltage is proportional to measured current on the sensing terminals.
 
