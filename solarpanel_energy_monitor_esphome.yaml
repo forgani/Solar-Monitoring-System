@@ -1,0 +1,197 @@
+#*******************************************************************************
+# ESP-12 based Solar Panel Monitoring System in ESPHome
+# Visualize the data in the Home Assistant
+# This system helps us to remotely monitor the power of the solar panels, batteries and the DC load.
+# esphome config/compile/upload/run/logs solarpanel_energy_monitor.yaml
+# Forgani, Forghanain
+# 
+# initial 24 Jan. 2024
+# updated on 23/04/2025
+# ******************************************************************************/
+substitutions:
+  device_name: 'solar_battery_monitor'
+  log_level: "NONE" # "INFO" # "DEBUG"
+
+esphome:
+  name: ${device_name}
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+  level: ${log_level}
+  #baud_rate: 0 #need this to free up UART pins
+
+ota:
+  - platform: esphome
+    password: !secret ota_password_soloar_bt
+  
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret encryption_solar_bt
+
+    
+wifi:
+  power_save_mode: NONE
+  #reboot_timeout: 15min
+  networks:
+    - ssid: !secret iot_wifi_ssid
+      password: !secret iot_wifi_password
+  ap:
+    ssid: $device_name
+    password: !secret ap_password
+
+
+mqtt:
+  broker: !secret mqtt_ip
+  port: 1883
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  client_id: "${device_name}"
+  log_topic:
+    topic: "${device_name}/logs"
+    level: debug
+
+
+i2c:
+  sda: 4
+  scl: 5
+  scan: True
+  
+#dallas:
+#  - pin: GPIO00    # D3  // GPIO00 . do not use D8 & D0 GPIO15/16
+#    update_interval: 60s
+    
+ads1115:
+  address: 0x48
+  continuous_mode: on
+  id: ads1115_48
+  
+sensor:
+  - platform: ina219
+    address: 0x40
+    shunt_resistance: 0.01 ohm
+    current:
+      name: "${device_name} Load INA Current"
+      unit_of_measurement: A
+      filters:
+        - multiply: 0.8
+      accuracy_decimals: 2
+    power:
+      name: "${device_name} Load INA Power"
+      unit_of_measurement: W
+      filters:
+        - multiply: 20
+      accuracy_decimals: 2
+    bus_voltage:
+      name: "${device_name} Load Bus INA Voltage"
+      filters:
+        - multiply: 2.24
+      accuracy_decimals: 2
+    shunt_voltage:
+      name: "${device_name} Load Shunt INA Voltage"
+      unit_of_measurement: mV
+      filters:
+        - multiply: 1000
+    max_voltage: 32.0V
+    max_current: 3.2A
+    update_interval: 30s
+  - platform: ads1115  
+    name: "$device_name battery2 voltage A3_GND"
+    multiplexer: 'A3_GND'
+    gain: 6.144
+    unit_of_measurement: "V"
+    icon: "mdi:battery-high"
+    update_interval: 30s
+    accuracy_decimals: 2
+    id: bt2Voltage
+    filters:
+      - multiply: 5.77
+  - platform: ads1115  
+    name: "$device_name battery1 voltage A2_GND"
+    multiplexer: 'A2_GND'
+    gain: 6.144
+    id: bt1Voltage
+    unit_of_measurement: "V"
+    icon: "mdi:battery-high"
+    update_interval: 30s
+    accuracy_decimals: 2
+    filters:
+      - multiply: 5.85
+  - platform: ads1115  
+    name: "$device_name voltage A1_A3"
+    multiplexer: 'A1_A3'
+    gain: 6.144
+    unit_of_measurement: "V"
+    icon: "mdi:solar-power"
+    update_interval: 30s
+    accuracy_decimals: 2
+    filters:
+      #- multiply: 5.688   nacht  13.89-12.64   also -1.23
+      - lambda: if ((-1 * x + id(bt1Voltage).state) > 0) {  return -1 * x + id(bt1Voltage).state; } return 0; 
+      #- lambda: 'return 5 * x + id(bt1Voltage).state;'
+  - platform: ads1115
+    name: "$device_name solar voltage A1_GND"
+    multiplexer: 'A1_GND'
+    gain: 6.144
+    unit_of_measurement: "V"
+    icon: "mdi:solar-power"
+    update_interval: 30s
+    accuracy_decimals: 2
+    filters:
+      #- multiply: 5.93
+      - lambda: if ((-18 * x + id(bt1Voltage).state) > 0) {  return -18 * x + id(bt1Voltage).state; } return 0; 
+      #'return -18 * x + id(bt1Voltage).state;'
+  - platform: ads1115
+    name: "$device_name solar current A0_GND"
+    multiplexer: 'A0_GND'
+    gain: 6.144
+    unit_of_measurement: "A"
+    accuracy_decimals: 2
+    filters:
+      - multiply: 80
+         
+  - platform: dht
+    pin: GPIO02  # D4
+    temperature:
+      name: "${device_name} Temperature"
+    humidity:
+      name: "${device_name} Humidity"
+    update_interval: 60s
+    model: DHT11
+
+#  - platform: dallas
+#    address: 0xf83ce1045783fc28  
+#    name: "${device_name} Temperature"
+#    device_class: "temperature"
+#    state_class: "measurement"
+#    unit_of_measurement: "°C"
+#    icon: "mdi:temperature-celsius"
+
+  - platform: uptime
+    name: "${device_name} Uptime"
+    id: ${device_name}_uptime
+
+  # WiFi Signal sensor.
+  - platform: wifi_signal
+    name: "${device_name} WiFi Signal"
+    id: ${device_name}_wifi_signal
+    update_interval: 30s
+
+binary_sensor:
+  - platform: status
+    name: "${device_name} Status" 
+
+text_sensor:
+  - platform: version
+    name: "${device_name} esphome version" 
+    # Get the WiFi details
+  - platform: wifi_info
+    ip_address:
+      name: "${device_name} IP Address"
+    ssid:
+      name: "${device_name} SSID"
+    mac_address:
+      name: "${device_name} Mac Address"
