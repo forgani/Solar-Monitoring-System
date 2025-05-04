@@ -1,4 +1,4 @@
-# Solar-Monitoring-System
+# Solar-Monitoring-System with Blynk app
 ### ESP-12 based Solar Panel Monitoring System
 
 This system helps you to remotely monitor the power of  your solar panels, batteries and the DC load with a smartphone from anywhere.<br>
